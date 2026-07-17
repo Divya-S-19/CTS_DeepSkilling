@@ -1,0 +1,6 @@
+Without the Page Object Model (POM), if the Submit button ID changes from
+"submit" to "btn-submit", every test script using that locator must be updated.
+
+With POM, the locator is defined only once in the page class.
+Updating the locator in one place automatically fixes all tests that use it,
+making the framework easier to maintain and reducing code duplication.
