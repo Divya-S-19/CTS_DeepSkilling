@@ -1,0 +1,17 @@
+### Add Student
+POST http://localhost:5002/api/students
+Content-Type: application/json
+
+{
+    "name": "Divya"
+}
+
+###
+
+### Enroll Student
+POST http://localhost:5002/api/students/1/enroll
+Content-Type: application/json
+
+{
+    "course_id": 1
+}

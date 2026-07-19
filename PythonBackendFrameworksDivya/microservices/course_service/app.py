@@ -1,54 +1,42 @@
 from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
+from models import db, Course
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///courses.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///courses.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-
-class Course(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    department = db.Column(db.String(100))
-
+db.init_app(app)
 
 with app.app_context():
     db.create_all()
 
-    if Course.query.count() == 0:
-        db.session.add(Course(name="Python", department="IT"))
-        db.session.add(Course(name="Java", department="CSE"))
-        db.session.commit()
+
+# Home Route
+@app.route("/")
+def home():
+    return "Course Service Running"
 
 
+# Get All Courses
 @app.route("/api/courses", methods=["GET"])
 def get_courses():
     courses = Course.query.all()
-    return jsonify([
-        {
-            "id": c.id,
-            "name": c.name,
-            "department": c.department
-        } for c in courses
-    ])
+    return jsonify([course.to_dict() for course in courses])
 
 
+# Get One Course
 @app.route("/api/courses/<int:id>", methods=["GET"])
 def get_course(id):
     course = Course.query.get(id)
 
     if not course:
-        return jsonify({"message": "Course not found"}), 404
+        return jsonify({"message": "Course Not Found"}), 404
 
-    return jsonify({
-        "id": course.id,
-        "name": course.name,
-        "department": course.department
-    })
+    return jsonify(course.to_dict())
 
 
+# Add Course
 @app.route("/api/courses", methods=["POST"])
 def add_course():
     data = request.json
@@ -61,7 +49,23 @@ def add_course():
     db.session.add(course)
     db.session.commit()
 
-    return jsonify({"message": "Course Added"}), 201
+    return jsonify({
+        "message": "Course Added"
+    }), 201
+
+
+# Add Sample Course (Temporary)
+@app.route("/addsample")
+def add_sample():
+    course = Course(
+        name="Python",
+        department="IT"
+    )
+
+    db.session.add(course)
+    db.session.commit()
+
+    return "Sample Course Added"
 
 
 if __name__ == "__main__":
