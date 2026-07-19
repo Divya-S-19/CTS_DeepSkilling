@@ -7,7 +7,7 @@
 -- Every non-key attribute depends on the entire primary key.
 -- In enrollments, enrollment_date and grade depend on the enrollment record.
 
--- 3NF:
+-- 3NF :
 -- No transitive dependencies exist.
 -- Department details are stored in departments table.
 -- Storing dept_name in students would violate 3NF.
